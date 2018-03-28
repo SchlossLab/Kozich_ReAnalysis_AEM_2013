@@ -1,0 +1,3 @@
+set.current(inputdir=data/mothur, outputdir=data/mothur, seed=19760620)
+summary.single(shared=data/mothur/stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.unique_list.shared, calc=nseqs-sobs, subsample=3000)
+
