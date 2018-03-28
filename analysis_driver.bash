@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# Obtained the Linux version of mothur (v1.39.5) from the mothur GitHub repository
+wget --no-check-certificate https://github.com/mothur/mothur/releases/download/v1.39.5/Mothur.linux_64.zip
+unzip Mothur.linux_64.zip
+mv mothur code/
+rm Mothur.linux_64.zip
+rm -rf __MACOSX
+
+
 # Obtained the raw `fastq.gz` files from https://www.mothur.org/MiSeqDevelopmentData.html
 # * Downloaded https://www.mothur.org/MiSeqDevelopmentData/StabilityWMetaG.tar
 # * Ran the following from the project's root directory
