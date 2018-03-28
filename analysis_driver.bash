@@ -32,3 +32,16 @@ rm Trainset14_032015.pds.tgz
 # Generate a customized version of the SILVA v4 reference dataset
 code/mothur/mothur "#pcr.seqs(fasta=data/references/silva.seed.align, start=11894, end=25319, keepdots=F, processors=8)"
 mv data/references/silva.seed.pcr.align data/references/silva.v4.align
+
+
+# Run mothur through the data curation steps
+code/mothur/mothur code/get_good_seqs.batch
+
+
+# Run mock community data through seq.error to sequencing error rate
+code/mothur/mothur code/get_error.batch
+
+
+# Run processed data through clustering and making a shared file
+code/mothur/mothur code/get_shared_otus.batch
+
