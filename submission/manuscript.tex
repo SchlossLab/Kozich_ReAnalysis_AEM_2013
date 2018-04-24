@@ -9,11 +9,10 @@
 \else % if luatex or xelatex
   \ifxetex
     \usepackage{mathspec}
-    \usepackage{xltxtra,xunicode}
   \else
     \usepackage{fontspec}
   \fi
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
   \newcommand{\euro}{€}
 \fi
 % use upquote if available, for straight quotes in verbatim environments
@@ -24,22 +23,12 @@
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
 \usepackage[margin=1.0in]{geometry}
-\ifxetex
-  \usepackage[setpagesize=false, % page size defined by xetex
-              unicode=false, % unicode breaks when used with xetex
-              xetex]{hyperref}
-\else
-  \usepackage[unicode=true]{hyperref}
-\fi
-\hypersetup{breaklinks=true,
-            bookmarks=true,
-            pdfauthor={},
+\usepackage{hyperref}
+\PassOptionsToPackage{usenames,dvipsnames}{color} % color is loaded by hyperref
+\hypersetup{unicode=true,
             pdftitle={NAME OF THIS STUDY},
-            colorlinks=true,
-            citecolor=blue,
-            urlcolor=blue,
-            linkcolor=magenta,
-            pdfborder={0 0 0}}
+            pdfborder={0 0 0},
+            breaklinks=true}
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{graphicx,grffile}
 \makeatletter
@@ -80,6 +69,17 @@
   \date{}
   \predate{}\postdate{}
 
+
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
 \usepackage{helvet} % Helvetica font
 \renewcommand*\familydefault{\sfdefault} % Use the sans serif version of the font
 \usepackage[T1]{fontenc}
@@ -93,16 +93,6 @@
 \usepackage{lineno}
 
 \usepackage{pdfpages}
-
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
 
 \begin{document}
 \maketitle
@@ -138,19 +128,50 @@ Ann Arbor, MI 48109
 
 \subsection{Results and Discussion}\label{results-and-discussion}
 
+\textbf{Scaling up.} The advantage of the dual-index approach is that a
+large number of samples can be sequenced using a number of primers equal
+to only twice the square root of the number of samples. To fully
+evaluate this approach, we resequenced the V4 region of 360 samples that
+were previously described by sequencing the distal end of the V35 region
+on the 454 GS-FLX Titanium platform (1). In that study, we observed a
+clear separation between murine fecal samples obtained from 8 C57BL/6
+mice at 0 to 9 (early) and 141 to 150 (late) days after weaning, and
+there was significantly less variation between the late samples than the
+early samples. In addition to the mouse fecal samples, we allocated 2
+pairs of indices to resequence our mock community. We generated 3.9
+million pairs of sequence reads from the 16S rRNA gene with an average
+coverage of 10,735.1 pairs of reads per sample (95\% of the samples had
+more than 2,788.9 pairs of sequences) using a new collection of 8-nt
+indices (see the supplemental material). Although individual samples
+were expected to have various amplification efficiencies, analysis of
+the number of reads per index did not suggest a systematic positive or
+negative amplification bias that could be attributed to the indices. The
+combined error rate for the two mock communities was 0.07\% before
+preclustering and 0.01\% after (n = 14,094 sequences). When we used
+UCHIME to remove chimeras and rarefied to 5,000 sequences, there was an
+average of 30.4 OTUs (i.e., 10.4 spurious OTUs). Similar to our previous
+results, ordination of the mouse fecal samples again showed the
+separation between the early and late periods and increased
+stabilization with age (Fig. 4) (Mantel test coefficient, 0.81; P
+\textless{} 0.001). These results clearly indicate that our approach can
+be scaled to multiplex large numbers of samples.
+
 \subsection{Conclusions}\label{conclusions}
 
 \subsection{Materials and Methods}\label{materials-and-methods}
 
 \newpage
 
-Insert figure legends with the first sentence in bold, for example:
+\textbf{FIG 4} Principal coordinate ordination of YC values (2) relating
+the community structures of the fecal microbiota from 12 mice collected
+on days 0 through 9 (Early) and days 141 through 150 (Late) after
+weaning.
 
-\textbf{Figure 1. Number of OTUs sampled among bacterial and archaeal
-16S rRNA gene sequences for different OTU definitions and level of
-sequencing effort.} Rarefaction curves for different OTU definitions of
-Bacteria (A) and Archaea (B). Rarefaction curves for the coarse
-environments in Table 1 for Bacteria (C) and Archaea (D).
+\begin{figure}[htbp]
+\centering
+\includegraphics{../results/figures/nmds_figure.png}
+\caption{}
+\end{figure}
 
 \newpage
 
@@ -158,5 +179,17 @@ environments in Table 1 for Bacteria (C) and Archaea (D).
 \addcontentsline{toc}{subsection}{References}
 
 \hypertarget{refs}{}
+\hypertarget{ref-Schloss2012}{}
+1. \textbf{Schloss PD}, \textbf{Schubert AM}, \textbf{Zackular JP},
+\textbf{Iverson KD}, \textbf{Young VB}, \textbf{Petrosino JF}. 2012.
+Stabilization of the murine gut microbiome following weaning. Gut
+Microbes \textbf{3}:383--393.
+doi:\href{https://doi.org/10.4161/gmic.21008}{10.4161/gmic.21008}.
+
+\hypertarget{ref-Yue2001}{}
+2. \textbf{Yue JC}, \textbf{Clayton MK}, \textbf{Lin F-C}. 2001. A
+nonparametric estimator of species overlap. Biometrics
+\textbf{57}:743--749.
+doi:\href{https://doi.org/10.1111/j.0006-341x.2001.00743.x}{10.1111/j.0006-341x.2001.00743.x}.
 
 \end{document}
