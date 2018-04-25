@@ -14,11 +14,14 @@ FINAL = submission/
 print-%:
 	@echo '$*=$($*)'
 
-MAKEFLAGS += --warn-undefined-variables
-SHELL := bash
-.SHELLFLAGS := -eu -o pipefail
 
-
+# Obtained the Linux version of mothur (v1.39.5) from the mothur GitHub repository
+code/mothur :
+	wget --no-check-certificate https://github.com/mothur/mothur/releases/download/v1.39.5/Mothur.linux_64.zip
+	unzip Mothur.linux_64.zip
+	mv mothur code/
+	rm Mothur.linux_64.zip
+	rm -rf __MACOSX
 
 ################################################################################
 #
@@ -36,7 +39,7 @@ SHELL := bash
 # also contains the reference taxonomy. We will limit the databases to only
 # include bacterial sequences.
 
-$(REFS)/silva.seed.align :
+$(REFS)/silva.seed.align : code/mothur
 	wget -N http://mothur.org/w/images/1/15/Silva.seed_v123.tgz
 	tar xvzf Silva.seed_v123.tgz silva.seed_v123.align silva.seed_v123.tax
 	mothur "#get.lineage(fasta=silva.seed_v123.align, taxonomy=silva.seed_v123.tax, taxon=Bacteria);degap.seqs(fasta=silva.seed_v123.pick.align, processors=8)"
@@ -66,6 +69,17 @@ $(REFS)/trainset14_032015.% :
 # overall analysis.
 #
 ################################################################################
+
+
+# Obtained the raw `fastq.gz` files from https://www.mothur.org/MiSeqDevelopmentData.html
+# * Downloaded https://www.mothur.org/MiSeqDevelopmentData/StabilityWMetaG.tar
+# * Ran the following from the project's root directory
+
+data/raw/StabilityWMetaG.tar :
+	wget --no-check-certificate https://www.mothur.org/MiSeqDevelopmentData/StabilityWMetaG.tar
+	tar xvf StabilityWMetaG.tar -C data/raw/
+	mv StabilityWMetaG.tar data/raw/
+
 
 # Change stability to the * part of your *.files file that lives in data/raw/
 BASIC_STEM = data/mothur/stability.trim.contigs.good.unique.good.filter.unique.precluster
@@ -123,6 +137,10 @@ $(BASIC_STEM).pick.pick.pick.error.summary : code/get_error.batch\
 ################################################################################
 
 
+# Construct NMDS png file
+results/figures/nmds_figure.png : code/plot_nmds.R\
+				$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.nmds.axes
+	R -e "source('code/plot_nmds.R'); plot_nmds('$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.nmds.axes')"
 
 ################################################################################
 #
@@ -132,8 +150,8 @@ $(BASIC_STEM).pick.pick.pick.error.summary : code/get_error.batch\
 #
 ################################################################################
 
-
-$(FINAL)/manuscript.% : 			\ #include data files that are needed for paper don't leave this line with a : \
+$(FINAL)/manuscript.% : results/figures/nmds_figure.png\
+						$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared\
 						$(FINAL)/mbio.csl\
 						$(FINAL)/references.bib\
 						$(FINAL)/manuscript.Rmd
@@ -141,9 +159,6 @@ $(FINAL)/manuscript.% : 			\ #include data files that are needed for paper don't
 	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
 	rm $(FINAL)/manuscript.utf8.md
 
-
-write.paper : $(TABLES)/table_1.pdf $(TABLES)/table_2.pdf\ #customize to include
-				$(FIGS)/figure_1.pdf $(FIGS)/figure_2.pdf\	# appropriate tables and
-				$(FIGS)/figure_3.pdf $(FIGS)/figure_4.pdf\	# figures
+write.paper : results/figures/nmds_figure.png\
 				$(FINAL)/manuscript.Rmd $(FINAL)/manuscript.md\
 				$(FINAL)/manuscript.tex $(FINAL)/manuscript.pdf
