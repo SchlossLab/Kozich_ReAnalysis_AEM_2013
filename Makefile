@@ -3,6 +3,7 @@ FIGS = results/figures
 TABLES = results/tables
 PROC = data/process
 FINAL = submission/
+MOTHUR = code/mothur/mothur
 
 # utility function to print various variables. For example, running the
 # following at the command line:
@@ -16,7 +17,7 @@ print-%:
 
 
 # Obtained the Linux version of mothur (v1.39.5) from the mothur GitHub repository
-code/mothur :
+$(MOTHUR) :
 	wget --no-check-certificate https://github.com/mothur/mothur/releases/download/v1.39.5/Mothur.linux_64.zip
 	unzip Mothur.linux_64.zip
 	mv mothur code/
@@ -39,15 +40,15 @@ code/mothur :
 # also contains the reference taxonomy. We will limit the databases to only
 # include bacterial sequences.
 
-$(REFS)/silva.seed.align : code/mothur
+$(REFS)/silva.seed.align : $(MOTHUR)
 	wget -N http://mothur.org/w/images/1/15/Silva.seed_v123.tgz
 	tar xvzf Silva.seed_v123.tgz silva.seed_v123.align silva.seed_v123.tax
-	mothur "#get.lineage(fasta=silva.seed_v123.align, taxonomy=silva.seed_v123.tax, taxon=Bacteria);degap.seqs(fasta=silva.seed_v123.pick.align, processors=8)"
+	$(MOTHUR) "#get.lineage(fasta=silva.seed_v123.align, taxonomy=silva.seed_v123.tax, taxon=Bacteria);degap.seqs(fasta=silva.seed_v123.pick.align, processors=8)"
 	mv silva.seed_v123.pick.align $(REFS)/silva.seed.align
 	rm Silva.seed_v123.tgz silva.seed_v123.*
 
-$(REFS)/silva.v4.align : $(REFS)/silva.seed.align
-	mothur "#pcr.seqs(fasta=$(REFS)/silva.seed.align, start=11894, end=25319, keepdots=F, processors=8)"
+$(REFS)/silva.v4.align : $(REFS)/silva.seed.align $(MOTHUR)
+	$(MOTHUR) "#pcr.seqs(fasta=$(REFS)/silva.seed.align, start=11894, end=25319, keepdots=F, processors=8)"
 	mv $(REFS)/silva.seed.pcr.align $(REFS)/silva.v4.align
 
 # Next, we want the RDP reference taxonomy. The current version is v10 and we
@@ -56,9 +57,9 @@ $(REFS)/silva.v4.align : $(REFS)/silva.seed.align
 
 $(REFS)/trainset14_032015.% :
 	wget -N http://www.mothur.org/w/images/8/88/Trainset14_032015.pds.tgz
-	tar xvzf Trainset14_032015.pds.tgz trainset14_032015.pds/trainset14_032015.pds.*
+	tar xvzf Trainset14_032015.pds.tgz
 	mv trainset14_032015.pds/* $(REFS)/
-	rmdir trainset14_032015.pds
+	rm -rf trainset14_032015.pds
 	rm Trainset14_032015.pds.tgz
 
 ################################################################################
@@ -93,8 +94,10 @@ BASIC_STEM = data/mothur/stability.trim.contigs.good.unique.good.filter.unique.p
 $(BASIC_STEM).denovo.uchime.pick.pick.count_table $(BASIC_STEM).pick.pick.fasta $(BASIC_STEM).pick.pds.wang.pick.taxonomy : code/get_good_seqs.batch\
 					data/references/silva.v4.align\
 					data/references/trainset14_032015.pds.fasta\
-					data/references/trainset14_032015.pds.tax
-	mothur code/get_good_seqs.batch;\
+					data/references/trainset14_032015.pds.tax\
+					data/raw/StabilityWMetaG.tar\
+					$(MOTHUR)
+	$(MOTHUR) code/get_good_seqs.batch;\
 	rm data/mothur/*.map
 
 
@@ -108,8 +111,9 @@ $(BASIC_STEM).denovo.uchime.pick.pick.count_table $(BASIC_STEM).pick.pick.fasta 
 $(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared $(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.0.03.cons.taxonomy : code/get_shared_otus.batch\
 					$(BASIC_STEM).denovo.uchime.pick.pick.count_table\
 					$(BASIC_STEM).pick.pick.fasta\
-					$(BASIC_STEM).pick.pds.wang.pick.taxonomy
-	mothur code/get_shared_otus.batch
+					$(BASIC_STEM).pick.pds.wang.pick.taxonomy\
+					$(MOTHUR)
+	$(MOTHUR) code/get_shared_otus.batch
 	rm $(BASIC_STEM).denovo.uchime.pick.pick.pick.count_table
 	rm $(BASIC_STEM).pick.pick.pick.fasta
 	rm $(BASIC_STEM).pick.pds.wang.pick.pick.taxonomy;
@@ -123,8 +127,11 @@ $(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared $(BASIC_STEM).pick.pick
 $(BASIC_STEM).pick.pick.pick.error.summary : code/get_error.batch\
 					$(BASIC_STEM).denovo.uchime.pick.pick.count_table\
 					$(BASIC_STEM).pick.pick.fasta\
-					$(REFS)/HMP_MOCK.v4.fasta
-	mothur code/get_error.batch
+					$(REFS)/HMP_MOCK.v4.fasta\
+					$(MOTHUR)
+	$(MOTHUR) code/get_error.batch
+
+
 
 
 
@@ -135,6 +142,11 @@ $(BASIC_STEM).pick.pick.pick.error.summary : code/get_error.batch\
 #	Run scripts to generate figures and tables
 #
 ################################################################################
+
+
+# Generate data to plot NMDS ordination
+$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.nmds.axes: $(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared $(MOTHUR)
+	$(MOTHUR) code/get_nmds_data.batch
 
 
 # Construct NMDS png file

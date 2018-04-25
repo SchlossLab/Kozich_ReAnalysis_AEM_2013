@@ -59,7 +59,7 @@ between murine fecal samples obtained from 8 C57BL/6 mice at 0 to 9 (early) and 
 (late) days after weaning, and there was significantly less variation between the late
 samples than the early samples. In addition to the mouse fecal samples, we allocated 2
 pairs of indices to resequence our mock community. We generated 3.9 million pairs of
-sequence reads from the 16S rRNA gene with an average coverage of 10,735.1 pairs of reads per
+sequence reads from the 16S rRNA gene with an average coverage of 10,752.4 pairs of reads per
 sample (95% of the samples had more than 2,788.9 pairs of sequences) using a new collection
 of 8-nt indices (see the supplemental material). Although individual samples were expected
 to have various amplification efficiencies, analysis of the number of reads per index did
