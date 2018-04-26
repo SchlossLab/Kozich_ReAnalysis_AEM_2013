@@ -1,4 +1,4 @@
 set.current(inputdir=data/mothur, outputdir=data/mothur, seed=19760620)
 dist.shared(shared=data/mothur/stability.trim.contigs.good.unique.good.filter.unique.precluster.pick.pick.pick.opti_mcc.unique_list.shared, calc=thetayc, subsample=3000, iters=100, processors=4)
-nmds(phylip=current, maxdim=2)
+pcoa(phylip=current)
 

@@ -144,15 +144,15 @@ $(BASIC_STEM).pick.pick.pick.error.summary : code/get_error.batch\
 ################################################################################
 
 
-# Generate data to plot NMDS ordination
-$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.nmds.axes: $(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared $(MOTHUR)
-	$(MOTHUR) code/get_nmds_data.batch
+# Generate data to plot PCoA ordination
+$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.pcoa.axes: $(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared $(MOTHUR)
+	$(MOTHUR) code/get_pcoa_data.batch
 
 
-# Construct NMDS png file
-results/figures/nmds_figure.png : code/plot_nmds.R\
-				$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.nmds.axes
-	R -e "source('code/plot_nmds.R'); plot_nmds('$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.nmds.axes')"
+# Construct PCoA png file
+results/figures/pcoa_figure.png : code/plot_pcoa.R\
+				$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.pcoa.axes
+	R -e "source('code/plot_pcoa.R'); plot_pcoa('$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.thetayc.0.03.lt.ave.pcoa.axes')"
 
 ################################################################################
 #
@@ -162,7 +162,7 @@ results/figures/nmds_figure.png : code/plot_nmds.R\
 #
 ################################################################################
 
-$(FINAL)/manuscript.% : results/figures/nmds_figure.png\
+$(FINAL)/manuscript.% : results/figures/pcoa_figure.png\
 						$(BASIC_STEM).pick.pick.pick.opti_mcc.unique_list.shared\
 						$(FINAL)/mbio.csl\
 						$(FINAL)/references.bib\
@@ -171,6 +171,6 @@ $(FINAL)/manuscript.% : results/figures/nmds_figure.png\
 	mv $(FINAL)/manuscript.knit.md submission/manuscript.md
 	rm $(FINAL)/manuscript.utf8.md
 
-write.paper : results/figures/nmds_figure.png\
+write.paper : results/figures/pcoa_figure.png\
 				$(FINAL)/manuscript.Rmd $(FINAL)/manuscript.md\
 				$(FINAL)/manuscript.tex $(FINAL)/manuscript.pdf
