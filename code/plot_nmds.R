@@ -22,12 +22,17 @@ plot_nmds <- function(axes_file){
   pch <- vector()
   pch[plot_early] <- 21
   pch[plot_late] <- 19
+
+	colors <- vector()
+	colors[plot_early] <- "orange"
+	colors[plot_late] <- "blue"
+
   output_file_name <- "results/figures/nmds_figure.png"
   png(file=output_file_name)
     plot(plot_axes$axis2~plot_axes$axis1, pch=pch, xlab="NMDS Axis 1",
-                    ylab="NMDS Axis 2")
+                    ylab="NMDS Axis 2", col=colors)
     legend(x=max(plot_axes$axis1)-0.125, y=min(plot_axes$axis2)+0.125,
-                    legend=c("Early", "Late"), pch=c(21,19))
+                    legend=c("Early", "Late"), pch=c(21,19), col=c("orange", "blue"))
   dev.off()
 }
 
