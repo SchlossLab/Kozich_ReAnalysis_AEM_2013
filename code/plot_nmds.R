@@ -24,8 +24,8 @@ plot_nmds <- function(axes_file){
   pch[plot_late] <- 19
   output_file_name <- "results/figures/nmds_figure.png"
   png(file=output_file_name)
-    plot(plot_axes$axis2~plot_axes$axis1, pch=pch, xlab="PCoA Axis 1",
-                    ylab="PCoA Axis 2")
+    plot(plot_axes$axis2~plot_axes$axis1, pch=pch, xlab="NMDS Axis 1",
+                    ylab="NMDS Axis 2")
     legend(x=max(plot_axes$axis1)-0.125, y=min(plot_axes$axis2)+0.125,
                     legend=c("Early", "Late"), pch=c(21,19))
   dev.off()
