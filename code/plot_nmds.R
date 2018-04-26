@@ -19,9 +19,10 @@ plot_nmds <- function(axes_file){
   plot_day <- day[early | late]
   plot_early <- early[early | late]
   plot_late <- late[early | late]
+
   pch <- vector()
-  pch[plot_early] <- 21
-  pch[plot_late] <- 19
+  pch[plot_early] <- 15
+  pch[plot_late] <- 0
 
 	colors <- vector()
 	colors[plot_early] <- "orange"
@@ -32,7 +33,7 @@ plot_nmds <- function(axes_file){
     plot(plot_axes$axis2~plot_axes$axis1, pch=pch, xlab="NMDS Axis 1",
                     ylab="NMDS Axis 2", col=colors)
     legend(x=max(plot_axes$axis1)-0.125, y=min(plot_axes$axis2)+0.125,
-                    legend=c("Early", "Late"), pch=c(21,19), col=c("orange", "blue"))
+                    legend=c("Early", "Late"), pch=c(0,15), col=c("orange", "blue"))
   dev.off()
 }
 
