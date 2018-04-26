@@ -20,14 +20,14 @@ plot_nmds <- function(axes_file){
   plot_early <- early[early | late]
   plot_late <- late[early | late]
   pch <- vector()
-  pch[plot_early] <- 21
-  pch[plot_late] <- 19
+  pch[plot_early] <- 15
+  pch[plot_late] <- 0
   output_file_name <- "results/figures/nmds_figure.png"
   png(file=output_file_name)
     plot(plot_axes$axis2~plot_axes$axis1, pch=pch, xlab="NMDS Axis 1",
                     ylab="NMDS Axis 2")
     legend(x=max(plot_axes$axis1)-0.125, y=min(plot_axes$axis2)+0.125,
-                    legend=c("Early", "Late"), pch=c(21,19))
+                    legend=c("Early", "Late"), pch=c(0,15))
   dev.off()
 }
 
