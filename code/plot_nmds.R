@@ -10,30 +10,27 @@
 #
 ################################################################################
 
-plot_nmds <- function(axes_file){
-  axes <- read.table(file=axes_file, header=T, row.names=1)
-  day <- as.numeric(gsub(".*D(\\d*)$", "\\1", rownames(axes)))
-  early <- day <= 10
-  late <- day >= 140 & day <= 150
-  plot_axes <- axes[early | late, ]
-  plot_day <- day[early | late]
-  plot_early <- early[early | late]
-  plot_late <- late[early | late]
+library(dplyr)
+library(ggplot2)
 
-  pch <- vector()
-  pch[plot_early] <- 15
-  pch[plot_late] <- 0
-
-	colors <- vector()
-	colors[plot_early] <- "orange"
-	colors[plot_late] <- "blue"
-
-  output_file_name <- "results/figures/nmds_figure.png"
-  png(file=output_file_name)
-    plot(plot_axes$axis2~plot_axes$axis1, pch=pch, xlab="NMDS Axis 1",
-                    ylab="NMDS Axis 2", col=colors)
-    legend(x=max(plot_axes$axis1)-0.125, y=min(plot_axes$axis2)+0.125,
-                    legend=c("Early", "Late"), pch=c(0,15), col=c("orange", "blue"))
-  dev.off()
+plot_nmds <- function (axes_file){
+	axes <- read.table(file=axes_file, header=T, row.names=1) %>%
+                        mutate(day = as.numeric(gsub(".*D(\\d*)$", "\\1", rownames(.)))) %>%
+                        mutate(early_late = ifelse(day <= 10, "early", ifelse(day>=140 & day <=150, "late", NA))) %>%
+                        filter(!is.na(early_late))
+    ggplot(axes) +
+        aes(x=axis1, y=axis2, pch=early_late, col=early_late) +
+        geom_point(pch=19) +
+        labs(x="NMDS Axis 1", y="NMDS Axis 2") +
+        scale_color_brewer(palette="Set1", labels=c("Early", "Late"), name=NULL) +
+        theme_classic() +
+            theme(legend.background = element_rect(size=0.5, linetype="solid", color="black"),
+                        legend.text = element_text(size=12),
+                        legend.position = c(0.75,0.15),
+                        axis.title = element_text(size=14),
+                        axis.text = element_text(size=12),
+                        panel.border = element_rect(colour = "black", fill=NA, size=1)
+            ) +
+        ggsave("results/figures/nmds_figure.png")
 }
 

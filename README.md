@@ -71,8 +71,8 @@ indicate that our approach can be scaled to multiplex large numbers of samples.
 * R packages:
   * `knitr`
   * `rmarkdown`
-* etc
-
+	* `dplyr`
+	* `ggplot2`
 
 #### Running analysis
 
